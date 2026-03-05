@@ -3,55 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ukraynaca Öğren | Ana Sayfa</title>
+    <title>Ukraynaca | Ana Sayfa</title>
     <style>
         body { font-family: sans-serif; background-color: #131f24; color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
-        .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-around; padding: 15px 0; background: #131f24; border-bottom: 2px solid #3b4d57; position: sticky; top: 0; }
+        .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-around; padding: 15px 0; background: #131f24; border-bottom: 2px solid #3b4d57; position: sticky; top: 0; z-index: 10; }
         .stat { display: flex; align-items: center; gap: 5px; font-weight: bold; }
-        
-        .path-container { padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 30px; width: 100%; max-width: 480px; }
-        
-        .unit-header { background: #58cc02; width: 90%; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
-        .unit-header h2 { margin: 0; font-size: 1rem; text-transform: uppercase; opacity: 0.8; }
-        .unit-header p { margin: 5px 0 0; font-weight: bold; font-size: 1.2rem; }
-
-        .node { width: 80px; height: 70px; background: #58cc02; border-radius: 50%; border-bottom: 8px solid #46a302; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; text-decoration: none; color: white; transition: 0.1s; }
+        .path-container { padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; max-width: 480px; padding-bottom: 100px; }
+        .unit-header { background: #58cc02; width: 85%; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 0 #46a302; }
+        .unit-header h2 { margin: 0; font-size: 0.9rem; text-transform: uppercase; opacity: 0.9; color: #185a00; }
+        .unit-header p { margin: 5px 0 0; font-weight: bold; font-size: 1.3rem; }
+        .node { width: 90px; height: 80px; background: #58cc02; border-radius: 50%; border-bottom: 8px solid #46a302; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer; text-decoration: none; color: white; transition: 0.1s; position: relative; }
         .node:active { transform: translateY(4px); border-bottom-width: 2px; }
-        .node.locked { background: #3b4d57; border-color: #2b3a42; cursor: default; opacity: 0.5; }
-
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #131f24; border-top: 2px solid #3b4d57; display: flex; justify-content: space-around; padding: 15px 0; }
-        .nav-item { font-size: 1.5rem; opacity: 0.6; cursor: pointer; }
+        .node.locked { background: #3b4d57; border-color: #2b3a42; cursor: default; opacity: 0.6; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #131f24; border-top: 2px solid #3b4d57; display: flex; justify-content: space-around; padding: 20px 0; }
+        .nav-item { font-size: 1.8rem; opacity: 0.5; cursor: pointer; }
         .nav-item.active { opacity: 1; color: #1cb0f6; }
     </style>
 </head>
 <body>
-
     <div class="top-bar">
         <div class="stat">🇺🇦</div>
         <div class="stat">🔥 1</div>
         <div class="stat">💎 825</div>
     </div>
-
     <div class="path-container">
         <div class="unit-header">
             <h2>Bölüm 1, Ünite 1</h2>
             <p>Alfabeyi Öğren</p>
         </div>
-
         <a href="lesson.html" class="node">⭐</a>
-        
-        <div class="node locked">🔒</div>
-        <div class="node locked" style="margin-right: -50px;">🔒</div>
-        <div class="node locked">🔒</div>
-        <div class="node locked" style="margin-left: -50px;">🔒</div>
+        <div class="node locked" style="margin-left: 60px;">🔒</div>
+        <div class="node locked" style="margin-right: 20px;">🔒</div>
+        <div class="node locked" style="margin-right: 80px;">🔒</div>
     </div>
-
     <div class="bottom-nav">
         <div class="nav-item active">🏠</div>
         <div class="nav-item">📖</div>
         <div class="nav-item">🏆</div>
         <div class="nav-item">👤</div>
     </div>
-
 </body>
 </html>
