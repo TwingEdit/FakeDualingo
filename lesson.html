@@ -3,89 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ders | Ukraynaca</title>
+    <title>Ukraynaca Ders</title>
     <style>
-        body { font-family: sans-serif; background-color: #131f24; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; }
-        
+        body { font-family: sans-serif; background-color: #131f24; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .header { padding: 20px; display: flex; align-items: center; gap: 15px; }
-        .close-btn { font-size: 1.5rem; cursor: pointer; text-decoration: none; color: white; }
-        .progress-bg { flex-grow: 1; height: 12px; background: #3b4d57; border-radius: 10px; }
-        .progress-fill { width: 20%; height: 100%; background: #58cc02; border-radius: 10px; transition: 0.3s; }
-
-        .content { flex-grow: 1; padding: 20px; max-width: 480px; margin: 0 auto; width: 90%; }
-        h1 { font-size: 1.5rem; margin-bottom: 40px; }
-
-        .question-box { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-        .character { width: 80px; height: 80px; background: #23343d; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .bubble { background: white; color: black; padding: 10px 20px; border-radius: 15px; position: relative; font-size: 1.2rem; font-weight: bold; }
-
-        .options { display: grid; gap: 10px; }
-        .opt { background: #131f24; border: 2px solid #3b4d57; border-bottom: 5px solid #3b4d57; border-radius: 12px; color: white; padding: 15px; font-size: 1.1rem; cursor: pointer; text-align: left; }
+        .close-btn { font-size: 1.8rem; cursor: pointer; text-decoration: none; color: #afafaf; }
+        .prog-bg { flex-grow: 1; height: 14px; background: #3b4d57; border-radius: 10px; }
+        .prog-fill { width: 30%; height: 100%; background: #58cc02; border-radius: 10px; transition: 0.5s; }
+        .content { flex-grow: 1; padding: 25px; max-width: 480px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        h1 { font-size: 1.6rem; margin-top: 10px; }
+        .q-box { display: flex; align-items: center; gap: 15px; margin: 40px 0; }
+        .char { font-size: 3.5rem; }
+        .bubble { background: white; color: black; padding: 15px 25px; border-radius: 18px; position: relative; font-size: 1.3rem; font-weight: bold; box-shadow: 4px 4px 0 rgba(0,0,0,0.2); }
+        .options { display: grid; gap: 12px; margin-top: 20px; }
+        .opt { background: #131f24; border: 2px solid #3b4d57; border-bottom: 5px solid #3b4d57; border-radius: 15px; color: white; padding: 18px; font-size: 1.2rem; cursor: pointer; text-align: left; }
         .opt.selected { background: #202f36; border-color: #1cb0f6; color: #1cb0f6; }
-
-        .footer { border-top: 2px solid #3b4d57; padding: 20px; display: flex; justify-content: center; }
-        .check-btn { width: 100%; max-width: 400px; padding: 15px; border-radius: 15px; border: none; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        .btn-inactive { background: #3b4d57; color: #7a8a92; }
-        .btn-active { background: #58cc02; color: white; border-bottom: 4px solid #46a302; }
-        
-        /* Sonuç Paneli */
-        .result-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; padding: 30px 20px; font-weight: bold; }
-        .correct-bg { background: #d7ffb8; color: #185a00; display: block; }
+        .footer { border-top: 2px solid #3b4d57; padding: 25px; display: flex; flex-direction: column; align-items: center; background: #131f24; }
+        .check-btn { width: 100%; max-width: 430px; padding: 18px; border-radius: 16px; border: none; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .btn-off { background: #3b4d57; color: #7a8a92; }
+        .btn-on { background: #58cc02; color: white; border-bottom: 5px solid #46a302; }
+        .result-msg { margin-bottom: 15px; font-size: 1.3rem; font-weight: bold; display: none; width: 100%; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <a href="index.html" class="close-btn">✕</a>
-        <div class="progress-bg"><div class="progress-fill"></div></div>
-    </div>
-
+    <div class="header"><a href="index.html" class="close-btn">✕</a><div class="prog-bg"><div class="prog-fill"></div></div></div>
     <div class="content">
-        <h1>Bu cümleyi tercüme et</h1>
-        
-        <div class="question-box">
-            <div class="character">🦉</div>
-            <div class="bubble" id="uk-text">Так, тато!</div>
+        <h1>Bu cümleyi çevir</h1>
+        <div class="q-box">
+            <div class="char">🦉</div>
+            <div class="bubble">Так, тато!</div>
         </div>
-
         <div class="options">
-            <button class="opt" onclick="select(this, 'Evet')">Evet</button>
-            <button class="opt" onclick="select(this, 'Baba')">Baba</button>
-            <button class="opt" onclick="select(this, 'Hayır')">Hayır</button>
-            <button class="opt" onclick="select(this, 'Merhaba')">Merhaba</button>
+            <button class="opt" onclick="sel(this, 'Evet')">Evet, baba!</button>
+            <button class="opt" onclick="sel(this, 'Hayır')">Hayır, dede!</button>
+            <button class="opt" onclick="sel(this, 'Selam')">Selam, anne!</button>
         </div>
     </div>
-
-    <div class="footer" id="footer">
-        <button class="check-btn btn-inactive" id="main-btn" disabled onclick="checkAnswer()">Kontrol Et</button>
+    <div class="footer" id="foot">
+        <div id="msg" class="result-msg">Harika! Doğru.</div>
+        <button class="check-btn btn-off" id="btn" disabled onclick="verify()">Kontrol Et</button>
     </div>
-
     <script>
-        let selectedVal = "";
-        
-        function select(btn, val) {
-            document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedVal = val;
-            
-            const mainBtn = document.getElementById('main-btn');
-            mainBtn.disabled = false;
-            mainBtn.className = "check-btn btn-active";
+        let s = "";
+        const b = document.getElementById('btn');
+        const f = document.getElementById('foot');
+        const m = document.getElementById('msg');
+        function sel(el, val) {
+            document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+            el.classList.add('selected'); s = val; b.disabled = false; b.className = "check-btn btn-on";
         }
-
-        function checkAnswer() {
-            const footer = document.getElementById('footer');
-            const mainBtn = document.getElementById('main-btn');
-            
-            // Basit kontrol (Örnek olarak "Evet" seçilirse doğru kabul edelim)
-            footer.style.background = "#d7ffb8";
-            mainBtn.innerText = "Devam Et";
-            mainBtn.onclick = () => { window.location.href = "index.html"; };
-            
-            // Seslendirme
-            const msg = new SpeechSynthesisUtterance("Так, тато");
-            msg.lang = 'uk-UA';
-            window.speechSynthesis.speak(msg);
+        function verify() {
+            if(s === 'Evet') {
+                f.style.background = "#d7ffb8"; m.style.display = "block"; m.style.color = "#185a00";
+                b.innerText = "Devam Et"; b.onclick = () => location.href="index.html";
+                const v = new SpeechSynthesisUtterance("Так, тато"); v.lang = 'uk-UA'; window.speechSynthesis.speak(v);
+            } else { alert("Yanlış! Tekrar dene."); }
         }
     </script>
 </body>
