@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukraynaca Öğren | Duo-Free</title>
+    <style>
+        :root {
+            --bg: #131f24;
+            --card-bg: #1c2d35;
+            --text: #ffffff;
+            --duo-green: #58cc02;
+            --duo-blue: #1cb0f6;
+            --duo-red: #ff4b4b;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            touch-action: manipulation;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 16px;
+            background: #3b4d57;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--duo-green);
+            transition: width 0.3s ease;
+        }
+
+        .stats { font-weight: bold; color: #ffc800; font-size: 1.2rem; }
+
+        .card {
+            background: var(--card-bg);
+            border: 2px solid #3b4d57;
+            border-radius: 24px;
+            padding: 40px 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 0 #000;
+        }
+
+        .instruction { color: #afafaf; font-size: 1.1rem; margin-bottom: 10px; }
+
+        .word-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .uk-text { font-size: 3rem; font-weight: bold; color: var(--duo-blue); }
+
+        .btn-audio {
+            background: var(--duo-blue);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 0 #1899d6;
+        }
+
+        .options { display: grid; gap: 12px; width: 100%; }
+
+        .opt-btn {
+            background: var(--card-bg);
+            border: 2px solid #3b4d57;
+            border-bottom: 5px solid #3b4d57;
+            border-radius: 16px;
+            color: white;
+            padding: 18px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .opt-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
+
+        .correct { 
+            background: #d7ffb8 !important; 
+            color: #185a00 !important; 
+            border-color: #58cc02 !important;
+        }
+
+        .wrong { 
+            background: #ffdfe0 !important; 
+            color: #ea2b2b !important; 
+            border-color: #ff4b4b !important;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <span onclick="location.reload()" style="cursor:pointer">✕</span>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        <div class="stats">💎 <span id="score">0</span></div>
+    </div>
+
+    <div class="card">
+        <p class="instruction">Bu kelimenin anlamı ne?</p>
+        <div class="word-display">
+            <div class="uk-text" id="target">Yükleniyor...</div>
+            <button class="btn-audio" onclick="speak()">🔊</button>
+        </div>
+
+        <div class="options" id="options-box"></div>
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        // Kelime listesi - Buraya istediğin kadar ekleyebilirsin
+        const dictionary = [
+            { uk: "Так", tr: "Evet" },
+            { uk: "Ні", tr: "Hayır" },
+            { uk: "Тато", tr: "Baba" },
+            { uk: "Мама", tr: "Anne" },
+            { uk: "Привіт", tr: "Merhaba" },
+            { uk: "Дякую", tr: "Teşekkürler" },
+            { uk: "Будь ласка", tr: "Lütfen" },
+            { uk: "Де", tr: "Nerede" },
+            { uk: "Кіт", tr: "Kedi" },
+            { uk: "Собака", tr: "Köpek" },
+            { uk: "Хліб", tr: "Ekmek" },
+            { uk: "Вода", tr: "Su" }
+        ];
+
+        let currentWord = {};
+        let score = 0;
+        let totalAnswered = 0;
+
+        function speak() {
+            const msg = new SpeechSynthesisUtterance(currentWord.uk);
+            msg.lang = 'uk-UA';
+            window.speechSynthesis.speak(msg);
+        }
+
+        function nextQuestion() {
+            document.getElementById('feedback').innerText = "";
+            currentWord = dictionary[Math.floor(Math.random() * dictionary.length)];
+            document.getElementById('target').innerText = currentWord.uk;
+            
+            // Seçenekleri oluştur
+            let choices = [currentWord.tr];
+            while(choices.length < 3) {
+                let randomTr = dictionary[Math.floor(Math.random() * dictionary.length)].tr;
+                if(!choices.includes(randomTr)) choices.push(randomTr);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = choice;
+                btn.onclick = () => check(choice, btn);
+                box.appendChild(btn);
+            });
+
+            speak(); // Yeni kelime gelince oku
+        }
+
+        function check(selected, btn) {
+            const btns = document.querySelectorAll('.opt-btn');
+            btns.forEach(b => b.style.pointerEvents = 'none'); // Tıklamayı dondur
+
+            if(selected === currentWord.tr) {
+                btn.classList.add('correct');
+                score += 10;
+                totalAnswered++;
+                document.getElementById('score').innerText = score;
+                document.getElementById('progress').style.width = (totalAnswered * 10) % 100 + "%";
+                setTimeout(nextQuestion, 1000);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('feedback').innerText = `Doğru cevap: ${currentWord.tr}`;
+                setTimeout(() => {
+                    btns.forEach(b => {
+                        b.classList.remove('wrong');
+                        b.style.pointerEvents = 'auto';
+                    });
+                    nextQuestion();
+                }, 2000);
+            }
+        }
+
+        // Başlat
+        window.onload = nextQuestion;
+    </script>
+</body>
+</html>
