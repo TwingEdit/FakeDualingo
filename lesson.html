@@ -3,62 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ukraynaca Ders</title>
+    <title>Ukraynaca | Full Kurs</title>
     <style>
         body { font-family: sans-serif; background-color: #131f24; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .header { padding: 20px; display: flex; align-items: center; gap: 15px; }
         .close-btn { font-size: 1.8rem; cursor: pointer; text-decoration: none; color: #afafaf; }
         .prog-bg { flex-grow: 1; height: 14px; background: #3b4d57; border-radius: 10px; }
-        .prog-fill { width: 30%; height: 100%; background: #58cc02; border-radius: 10px; transition: 0.5s; }
-        .content { flex-grow: 1; padding: 25px; max-width: 480px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        h1 { font-size: 1.6rem; margin-top: 10px; }
-        .q-box { display: flex; align-items: center; gap: 15px; margin: 40px 0; }
-        .char { font-size: 3.5rem; }
-        .bubble { background: white; color: black; padding: 15px 25px; border-radius: 18px; position: relative; font-size: 1.3rem; font-weight: bold; box-shadow: 4px 4px 0 rgba(0,0,0,0.2); }
-        .options { display: grid; gap: 12px; margin-top: 20px; }
-        .opt { background: #131f24; border: 2px solid #3b4d57; border-bottom: 5px solid #3b4d57; border-radius: 15px; color: white; padding: 18px; font-size: 1.2rem; cursor: pointer; text-align: left; }
+        .prog-fill { width: 0%; height: 100%; background: #58cc02; border-radius: 10px; transition: 0.5s; }
+        .content { flex-grow: 1; padding: 25px; max-width: 480px; margin: 0 auto; width: 100%; box-sizing: border-box; overflow-y: auto; }
+        h1 { font-size: 1.4rem; margin-top: 10px; color: #afafaf; }
+        .q-box { display: flex; align-items: center; gap: 15px; margin: 30px 0; }
+        .char { font-size: 3rem; }
+        .bubble { background: white; color: black; padding: 15px 20px; border-radius: 18px; position: relative; font-size: 1.2rem; font-weight: bold; }
+        .options { display: grid; gap: 10px; margin-top: 10px; }
+        .opt { background: #131f24; border: 2px solid #3b4d57; border-bottom: 5px solid #3b4d57; border-radius: 15px; color: white; padding: 16px; font-size: 1.1rem; cursor: pointer; text-align: left; }
         .opt.selected { background: #202f36; border-color: #1cb0f6; color: #1cb0f6; }
-        .footer { border-top: 2px solid #3b4d57; padding: 25px; display: flex; flex-direction: column; align-items: center; background: #131f24; }
-        .check-btn { width: 100%; max-width: 430px; padding: 18px; border-radius: 16px; border: none; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .footer { border-top: 2px solid #3b4d57; padding: 20px; display: flex; flex-direction: column; align-items: center; background: #131f24; min-height: 100px; }
+        .check-btn { width: 100%; max-width: 400px; padding: 16px; border-radius: 16px; border: none; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; }
         .btn-off { background: #3b4d57; color: #7a8a92; }
         .btn-on { background: #58cc02; color: white; border-bottom: 5px solid #46a302; }
-        .result-msg { margin-bottom: 15px; font-size: 1.3rem; font-weight: bold; display: none; width: 100%; }
+        .result-msg { margin-bottom: 10px; font-size: 1.2rem; font-weight: bold; display: none; width: 100%; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="header"><a href="index.html" class="close-btn">✕</a><div class="prog-bg"><div class="prog-fill"></div></div></div>
+    <div class="header"><a href="index.html" class="close-btn">✕</a><div class="prog-bg"><div class="prog-fill" id="bar"></div></div></div>
+    
     <div class="content">
-        <h1>Bu cümleyi çevir</h1>
+        <h1 id="title">Tercüme Et</h1>
         <div class="q-box">
             <div class="char">🦉</div>
-            <div class="bubble">Так, тато!</div>
+            <div class="bubble" id="uk-text">...</div>
         </div>
-        <div class="options">
-            <button class="opt" onclick="sel(this, 'Evet')">Evet, baba!</button>
-            <button class="opt" onclick="sel(this, 'Hayır')">Hayır, dede!</button>
-            <button class="opt" onclick="sel(this, 'Selam')">Selam, anne!</button>
-        </div>
+        <div class="options" id="opt-container"></div>
     </div>
+
     <div class="footer" id="foot">
-        <div id="msg" class="result-msg">Harika! Doğru.</div>
-        <button class="check-btn btn-off" id="btn" disabled onclick="verify()">Kontrol Et</button>
+        <div id="msg" class="result-msg"></div>
+        <button class="check-btn btn-off" id="btn" disabled onclick="checkAnswer()">Kontrol Et</button>
     </div>
+
     <script>
-        let s = "";
-        const b = document.getElementById('btn');
-        const f = document.getElementById('foot');
-        const m = document.getElementById('msg');
-        function sel(el, val) {
-            document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
-            el.classList.add('selected'); s = val; b.disabled = false; b.className = "check-btn btn-on";
+        // DEV MÜFREDAT HAVUZU
+        const questions = [
+            // Temeller
+            { uk: "Привіт", correct: "Merhaba", opts: ["Merhaba", "Güle güle", "Evet"] },
+            { uk: "Так", correct: "Evet", opts: ["Hayır", "Belki", "Evet"] },
+            { uk: "Ні", correct: "Hayır", opts: ["Evet", "Hayır", "Lütfen"] },
+            { uk: "Будь ласка", correct: "Lütfen", opts: ["Teşekkürler", "Lütfen", "Özür dilerim"] },
+            { uk: "Дякую", correct: "Teşekkür ederim", opts: ["Rica ederim", "Merhaba", "Teşekkür ederim"] },
+            // Kişiler ve Aile
+            { uk: "Я", correct: "Ben", opts: ["Sen", "O", "Ben"] },
+            { uk: "Ти", correct: "Sen", opts: ["Biz", "Sen", "Siz"] },
+            { uk: "Мама і Тато", correct: "Anne ve Baba", opts: ["Anne ve Baba", "Kız ve Erkek", "Abi ve Abla"] },
+            { uk: "Це мій брат", correct: "Bu benim erkek kardeşim", opts: ["Bu benim babam", "Bu benim erkek kardeşim", "Bu benim arkadaşım"] },
+            // Nesneler ve Yemek
+            { uk: "Вода", correct: "Su", opts: ["Süt", "Su", "Çay"] },
+            { uk: "Хліб", correct: "Ekmek", opts: ["Ekmek", "Peynir", "Zeytin"] },
+            { uk: "Де молоко?", correct: "Süt nerede?", opts: ["Süt nerede?", "Ekmek nerede?", "Su nerede?"] },
+            { uk: "Кіт і Собака", correct: "Kedi ve Köpek", opts: ["Kuş ve Tavşan", "Kedi ve Köpek", "At ve Eşek"] },
+            // Basit Cümle Yapıları
+            { uk: "Я їм хліб", correct: "Ben ekmek yiyorum", opts: ["Ben su içiyorum", "Ben ekmek yiyorum", "Sen ekmek yiyorsun"] },
+            { uk: "Ти п'єш воду", correct: "Sen su içiyorsun", opts: ["Ben su içiyorum", "O su içiyor", "Sen su içiyorsun"] },
+            { uk: "Я люблю Україну", correct: "Ukrayna'yı seviyorum", opts: ["Ukrayna'ya gidiyorum", "Ukrayna'yı seviyorum", "Ukrayna'da yaşıyorum"] },
+            { uk: "Добре", correct: "İyi", opts: ["Kötü", "İyi", "Tamam"] },
+            { uk: "Як справи?", correct: "Nasılsın?", opts: ["Nasılsın?", "Adın ne?", "Kaç yaşındasın?"] }
+        ];
+
+        let currentQ = 0;
+        let selectedVal = null;
+
+        function loadQuestion() {
+            const q = questions[currentQ];
+            document.getElementById('uk-text').innerText = q.uk;
+            document.getElementById('bar').style.width = (currentQ / questions.length * 100) + "%";
+            
+            const container = document.getElementById('opt-container');
+            container.innerHTML = "";
+            
+            // Seçenekleri her seferinde karıştır
+            let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
+            
+            shuffledOpts.forEach(opt => {
+                const button = document.createElement('button');
+                button.className = "opt";
+                button.innerText = opt;
+                button.onclick = () => {
+                    document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedVal = opt;
+                    const btn = document.getElementById('btn');
+                    btn.disabled = false;
+                    btn.className = "check-btn btn-on";
+                };
+                container.appendChild(button);
+            });
+
+            document.getElementById('foot').style.background = "#131f24";
+            document.getElementById('msg').style.display = "none";
+            const btn = document.getElementById('btn');
+            btn.innerText = "Kontrol Et";
+            btn.className = "check-btn btn-off";
+            btn.disabled = true;
+            btn.onclick = checkAnswer;
         }
-        function verify() {
-            if(s === 'Evet') {
-                f.style.background = "#d7ffb8"; m.style.display = "block"; m.style.color = "#185a00";
-                b.innerText = "Devam Et"; b.onclick = () => location.href="index.html";
-                const v = new SpeechSynthesisUtterance("Так, тато"); v.lang = 'uk-UA'; window.speechSynthesis.speak(v);
-            } else { alert("Yanlış! Tekrar dene."); }
+
+        function checkAnswer() {
+            const q = questions[currentQ];
+            const btn = document.getElementById('btn');
+            const foot = document.getElementById('foot');
+            const msg = document.getElementById('msg');
+
+            if(selectedVal === q.correct) {
+                foot.style.background = "#d7ffb8";
+                msg.innerText = "Aferin! 🇺🇦";
+                msg.style.display = "block";
+                msg.style.color = "#185a00";
+                
+                const v = new SpeechSynthesisUtterance(q.uk);
+                v.lang = 'uk-UA';
+                window.speechSynthesis.speak(v);
+
+                btn.innerText = "Devam Et";
+                btn.onclick = () => {
+                    currentQ++;
+                    if(currentQ < questions.length) loadQuestion();
+                    else {
+                        alert("Tebrikler! Temel Ukraynaca kursunu bitirdin.");
+                        location.href = "index.html";
+                    }
+                };
+            } else {
+                alert("Yanlış cevap! Doğrusu: " + q.correct);
+            }
         }
+
+        window.onload = loadQuestion;
     </script>
 </body>
 </html>
